@@ -58,6 +58,12 @@ public record ObserverOptions
     /// Drop members and array items whose value is <c>null</c>, and objects and arrays left empty by that.
     /// </summary>
     public bool IgnoreNulls { get; init; }
+
+    /// <summary>
+    /// What happens to comments in the input that no comment rule decides; <see cref="CommentPolicy.AllowList"/> by
+    /// default, which drops every comment a rule does not keep.
+    /// </summary>
+    public CommentPolicy Comments { get; init; } = CommentPolicy.AllowList;
 }
 
 /// <summary>
