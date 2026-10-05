@@ -1,0 +1,11 @@
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory).toolkit/msbuild/init.targets" />
+
+  <!-- A library that sets EnforcePublicApiDocs fails its build on a public member without an XML doc comment. -->
+  <PropertyGroup Condition="'$(EnforcePublicApiDocs)'=='true'">
+    <NoWarn>$([System.String]::Copy('$(NoWarn)').Replace('CS1591',''))</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);CS1591</WarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
