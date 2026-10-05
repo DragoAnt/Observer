@@ -6,7 +6,8 @@
     <PackageTags>masking;redaction;pii;observer;hmac;streaming</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DragoAnt.Observer.Abstractions\DragoAnt.Observer.Abstractions.csproj" />
+    <!-- PrivateAssets none: the build assets of Abstractions (the toolchain guard from 1.1) reach every consumer of Core. -->
+    <ProjectReference Include="..\DragoAnt.Observer.Abstractions\DragoAnt.Observer.Abstractions.csproj" PrivateAssets="none" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="DragoAnt.Observer.Tests" />
