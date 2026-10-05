@@ -10,7 +10,8 @@ public abstract class ValueMaskStrategy
 {
     /// <summary>
     /// Built-in strategy: <see cref="MaskKind.Full"/> writes <c>"***"</c>, <see cref="MaskKind.Last4"/> keeps the last
-    /// four characters, <see cref="MaskKind.Hash"/> writes the keyed hash, <see cref="MaskKind.Null"/> writes no value;
+    /// four characters, <see cref="MaskKind.Hash"/> writes the keyed hash of a string's text or a number's or boolean's
+    /// literal — the same text as Microsoft's <c>HmacRedactor</c> for the same key and key id —, <see cref="MaskKind.Null"/> writes no value;
     /// anything else, <see cref="MaskKind.Custom"/> included, becomes <c>"***"</c>.
     /// </summary>
     public static ValueMaskStrategy Default { get; } = new DefaultValueMaskStrategy();
@@ -26,12 +27,9 @@ public abstract class ValueMaskStrategy
     private sealed class DefaultValueMaskStrategy : ValueMaskStrategy
     {
         private const int Last4MinLength = 8;
-        private const int HashHexLength = 16;
         private static readonly byte[] ProcessKey = RandomNumberGenerator.GetBytes(32);
 
         private static ReadOnlySpan<byte> Stars => "***"u8;
-        private static ReadOnlySpan<byte> HashPrefix => "hash:"u8;
-        private static ReadOnlySpan<byte> Hex => "0123456789abcdef"u8;
 
         public override void Mask(in MaskContext context, MaskValueWriter output)
         {
@@ -44,8 +42,8 @@ public abstract class ValueMaskStrategy
                 case MaskKind.Last4 when scalar:
                     WriteLast4(context.Value, output);
                     break;
-                case MaskKind.Hash when scalar:
-                    WriteHash(context.Value, context.Options.HashKey.IsEmpty ? ProcessKey : context.Options.HashKey.Span, output);
+                case MaskKind.Hash when scalar || context.Kind == ValueKind.Boolean:
+                    WriteHash(in context, output);
                     break;
                 default:
                     output.String(Stars);
@@ -86,20 +84,12 @@ public abstract class ValueMaskStrategy
             output.String(masked);
         }
 
-        private static void WriteHash(ReadOnlySpan<byte> value, ReadOnlySpan<byte> key, MaskValueWriter output)
+        private static void WriteHash(in MaskContext context, MaskValueWriter output)
         {
-            Span<byte> hash = stackalloc byte[32];
-            HMACSHA256.HashData(key, value, hash);
-
-            Span<byte> text = stackalloc byte[HashPrefix.Length + HashHexLength];
-            HashPrefix.CopyTo(text);
-            for (var i = 0; i < HashHexLength / 2; i++)
-            {
-                text[HashPrefix.Length + 2 * i] = Hex[hash[i] >> 4];
-                text[HashPrefix.Length + 2 * i + 1] = Hex[hash[i] & 0xF];
-            }
-
-            output.String(text);
+            var options = context.Options;
+            Span<byte> text = stackalloc byte[HmacHash.MaxLength];
+            var length = HmacHash.Write(context.Value, options.HashKey.IsEmpty ? ProcessKey : options.HashKey.Span, options.HashKeyId, text);
+            output.String(text[..length]);
         }
     }
 }
