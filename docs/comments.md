@@ -16,8 +16,9 @@ Formats with comments (JSONC today, YAML and CSV comment rows later) handle them
 
 ## Comment rules
 
-A rule decides the comments of the members it matches, for the placements it names:
+A rule decides the comments of the members it matches, for the placements it names (JSON observer shown):
 
+<!-- doc-test: skip -->
 ```csharp
 var observer = JsonObserver.Obj(AnyDepth(rules => rules
         .Match("password").Mask(MaskTag.Full).Comment(CommentKind.Any, CommentRules.Drop)

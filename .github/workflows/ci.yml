@@ -21,3 +21,4 @@ jobs:
     with:
       version: 0.0.0-ci.${{ github.run_number }}
       coverage-threshold: 70
+      pack: true
