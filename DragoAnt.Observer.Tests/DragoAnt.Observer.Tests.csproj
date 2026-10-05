@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\DragoAnt.Observer.Core\DragoAnt.Observer.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="PublicApiGenerator" />
+    <PackageReference Include="Microsoft.Extensions.Compliance.Redaction" />
+  </ItemGroup>
+</Project>
