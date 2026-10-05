@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <MSKit_SkipAudit_TargetFrameworkOverride>True</MSKit_SkipAudit_TargetFrameworkOverride>
+    <RootNamespace>DragoAnt.Observer</RootNamespace>
+    <Description>Format-neutral masking vocabulary of the DragoAnt observers: MaskKind and MaskTag, with no dependencies, so a model library can name how its values are masked without referencing an observer.</Description>
+    <EnforcePublicApiDocs>true</EnforcePublicApiDocs>
+    <PackageTags>masking;redaction;pii;observer;classification</PackageTags>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>DragoAnt.Observer</RootNamespace>
+    <Description>Format-neutral core of the DragoAnt observers: paths, name tests, results, options, value policies and the masking strategy with a keyed hash that matches Microsoft's HmacRedactor. Format packages such as DragoAnt.System.Text.Json.Observer build on it.</Description>
+    <EnforcePublicApiDocs>true</EnforcePublicApiDocs>
+    <PackageTags>masking;redaction;pii;observer;hmac;streaming</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- PrivateAssets none: the build assets of Abstractions (the toolchain guard from 1.1) reach every consumer of Core. -->
+    <ProjectReference Include="..\DragoAnt.Observer.Abstractions\DragoAnt.Observer.Abstractions.csproj" PrivateAssets="none" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="DragoAnt.Observer.Tests" />
+  </ItemGroup>
+</Project>

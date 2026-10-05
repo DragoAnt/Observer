@@ -1,0 +1,33 @@
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DragoAnt.Observer.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DynamicProxyGenAssembly2")]
+namespace DragoAnt.Observer
+{
+    public enum MaskKind
+    {
+        Full = 0,
+        Last4 = 1,
+        Hash = 2,
+        Null = 3,
+        Custom = 4,
+    }
+    public readonly struct MaskTag : System.IEquatable<DragoAnt.Observer.MaskTag>
+    {
+        public object? Key { get; }
+        public DragoAnt.Observer.MaskKind Kind { get; }
+        public static DragoAnt.Observer.MaskTag Full { get; }
+        public static DragoAnt.Observer.MaskTag Hash { get; }
+        public static DragoAnt.Observer.MaskTag Last4 { get; }
+        public static DragoAnt.Observer.MaskTag Null { get; }
+        public bool Equals(DragoAnt.Observer.MaskTag other) { }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+        public override string ToString() { }
+        public bool TryGetKey<T>(out T? key) { }
+        public DragoAnt.Observer.MaskTag WithKey(object? key) { }
+        public static DragoAnt.Observer.MaskTag Create(DragoAnt.Observer.MaskKind kind, object? key = null) { }
+        public static DragoAnt.Observer.MaskTag Custom(object key) { }
+        public static DragoAnt.Observer.MaskTag op_Implicit(DragoAnt.Observer.MaskKind kind) { }
+        public static bool operator !=(DragoAnt.Observer.MaskTag left, DragoAnt.Observer.MaskTag right) { }
+        public static bool operator ==(DragoAnt.Observer.MaskTag left, DragoAnt.Observer.MaskTag right) { }
+    }
+}

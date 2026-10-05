@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\DragoAnt.Observer.Core\DragoAnt.Observer.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="PublicApiGenerator" />
+    <PackageReference Include="Microsoft.Extensions.Compliance.Redaction" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Link="docs\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\DragoAnt.Observer.Abstractions\package.readme.md" Link="docs\abstractions.package.readme.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\DragoAnt.Observer.Core\package.readme.md" Link="docs\core.package.readme.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\docs\*.md" Link="docs\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
