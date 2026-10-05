@@ -48,7 +48,7 @@ Repository settings live in `Directory.Build.props` (target frameworks, copyrigh
 - Branch from `main` and target `main`.
 - Add or update tests for every behavior change; add a regression test for a bug fix.
 - Keep the build warning-free: warnings are treated as errors.
-- Update the package READMEs and `docs/` when usage changes.
+- Update `README.md` and `docs/` when usage changes; each package's readme is generated from `README.md` on `dotnet pack` (`<!-- nuget:only <PackageId> -->` blocks carry package-specific text).
 - The `ci` workflow must pass on the pull request.
 
 Releases are published to nuget.org by the maintainers from a GitHub release.
