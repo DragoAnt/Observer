@@ -5,4 +5,8 @@
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory).toolkit/msbuild/init.props" />
+
+  <PropertyGroup>
+    <MSKit_PackageReadmeFrom>README.md</MSKit_PackageReadmeFrom>
+  </PropertyGroup>
 </Project>

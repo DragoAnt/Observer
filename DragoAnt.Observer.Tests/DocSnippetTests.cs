@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 namespace DragoAnt.Observer.Tests;
 
 /// <summary>
-/// Every <c>```csharp</c> block of the README, the package readmes and <c>docs/</c> compiles against the current
+/// Every <c>```csharp</c> block of the README (the package readmes are generated from it) and <c>docs/</c> compiles against the current
 /// packages; a block with top-level statements runs and prints the <c>// </c> lines under its last
 /// <c>Console.WriteLine</c>. A block after <c>&lt;!-- doc-test: skip --&gt;</c> is a fragment.
 /// </summary>
@@ -13,7 +13,7 @@ public sealed class DocSnippetTests
 {
     private const string GlobalUsings = "global using System;\nglobal using System.Collections.Generic;\nglobal using System.Linq;\n";
 
-    private static readonly string[] Documents = ["README.md", "abstractions.package.readme.md", "core.package.readme.md", "comments.md", "hashing.md"];
+    private static readonly string[] Documents = ["README.md", "comments.md", "hashing.md"];
 
     private static readonly Lazy<MetadataReference[]> References = new(() =>
     {
