@@ -13,7 +13,7 @@ public readonly ref struct MaskContext
     /// <summary>
     /// Creates the context of one value. For format implementations.
     /// </summary>
-    /// <param name="value">The unescaped text of a string, the literal of a number or boolean, or empty.</param>
+    /// <param name="value">The unescaped text of a string, the literal of a number or boolean, the raw bytes of a binary value, or empty.</param>
     /// <param name="kind">Type of the value.</param>
     /// <param name="tag">How the rule asks for the value to be masked.</param>
     /// <param name="options">Options of the current call.</param>
@@ -31,8 +31,11 @@ public readonly ref struct MaskContext
     }
 
     /// <summary>
-    /// The unescaped UTF-8 text of a string, the literal of a number or boolean (<c>12.50</c>, <c>true</c>), or empty
-    /// for <c>null</c>, an object or an array — always the whole value, whatever <see cref="ObserverOptions.MaxValueBytes"/> says.
+    /// The unescaped UTF-8 text of a string, the literal of a number or boolean (<c>12.50</c>, <c>true</c>), the raw
+    /// bytes of a <see cref="ValueKind.Binary"/> value, or empty for a value in the no-value form, an object or an
+    /// array. Always the whole value — a format transcodes it to UTF-8 first — up to
+    /// <see cref="ObserverOptions.MaxMaskValueBytes"/>: a longer value never reaches the strategy.
+    /// <see cref="ObserverOptions.MaxValueBytes"/> does not apply.
     /// </summary>
     public ReadOnlySpan<byte> Value { get; }
 

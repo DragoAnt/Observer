@@ -1,0 +1,67 @@
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DragoAnt.Observer.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DynamicProxyGenAssembly2")]
+namespace DragoAnt.Observer.Conformance
+{
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class ConformanceDocument : System.IEquatable<DragoAnt.Observer.Conformance.ConformanceDocument>
+    {
+        public ConformanceDocument(string Text, DragoAnt.Observer.MaskStatus Status, DragoAnt.Observer.MaskFlags Flags = 0) { }
+        public DragoAnt.Observer.MaskFlags Flags { get; init; }
+        public DragoAnt.Observer.MaskStatus Status { get; init; }
+        public string Text { get; init; }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class ConformanceFailure : System.IEquatable<DragoAnt.Observer.Conformance.ConformanceFailure>
+    {
+        public ConformanceFailure(string Scenario, string Format, string Invariant, string Detail) { }
+        public string Detail { get; init; }
+        public string Format { get; init; }
+        public string Invariant { get; init; }
+        public string Scenario { get; init; }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public static class ConformanceKit
+    {
+        public static DragoAnt.Observer.ObserverOptions DefaultOptions { get; }
+        public static System.Collections.Generic.IReadOnlyList<string> Invariants { get; }
+        public static System.Collections.Generic.IReadOnlyList<DragoAnt.Observer.Conformance.ConformanceScenario> Seed { get; }
+        public static System.Threading.Tasks.Task<DragoAnt.Observer.Conformance.ConformanceReport> RunAsync(DragoAnt.Observer.Formats.IObserverFormat format, DragoAnt.Observer.Conformance.ConformanceTraits traits, System.Collections.Generic.IEnumerable<DragoAnt.Observer.Conformance.ConformanceScenario>? scenarios = null, System.Threading.CancellationToken cancellationToken = default) { }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class ConformanceReport : System.IEquatable<DragoAnt.Observer.Conformance.ConformanceReport>
+    {
+        public ConformanceReport(System.Collections.Generic.IReadOnlyList<DragoAnt.Observer.Conformance.ConformanceFailure> Failures, int ScenariosRun, int ChecksRun) { }
+        public int ChecksRun { get; init; }
+        public System.Collections.Generic.IReadOnlyList<DragoAnt.Observer.Conformance.ConformanceFailure> Failures { get; init; }
+        public int ScenariosRun { get; init; }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class ConformanceScenario : System.IEquatable<DragoAnt.Observer.Conformance.ConformanceScenario>
+    {
+        public ConformanceScenario(string Name, DragoAnt.Observer.MaskRules Rules) { }
+        public System.Collections.Generic.IReadOnlyDictionary<string, DragoAnt.Observer.Conformance.ConformanceDocument> Documents { get; init; }
+        public string Name { get; init; }
+        public bool NeedsComments { get; init; }
+        public DragoAnt.Observer.ObserverOptions Options { get; init; }
+        public DragoAnt.Observer.MaskRules Rules { get; init; }
+        public System.Collections.Generic.IReadOnlyList<DragoAnt.Observer.Conformance.ConformanceSecret> Secrets { get; init; }
+        public System.Collections.Generic.IReadOnlyList<string> Visible { get; init; }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class ConformanceSecret : System.IEquatable<DragoAnt.Observer.Conformance.ConformanceSecret>
+    {
+        public ConformanceSecret(string Path, string Clear, DragoAnt.Observer.MaskTag Tag) { }
+        public string Clear { get; init; }
+        public string Path { get; init; }
+        public DragoAnt.Observer.MaskTag Tag { get; init; }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class ConformanceTraits : System.IEquatable<DragoAnt.Observer.Conformance.ConformanceTraits>
+    {
+        public ConformanceTraits() { }
+        public bool Comments { get; init; }
+        public System.Func<string, string> EncodeValue { get; init; }
+        public bool MultiRecord { get; init; }
+        public bool RoundTripsUntouchedInput { get; init; }
+    }
+}

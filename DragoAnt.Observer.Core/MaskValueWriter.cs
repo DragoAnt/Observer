@@ -51,7 +51,8 @@ public abstract class MaskValueWriter
     public abstract void Boolean(bool value);
 
     /// <summary>
-    /// Writes no value: <c>null</c> in JSON, an empty cell in CSV.
+    /// Writes no value, in the format's no-value form: <c>null</c> in JSON, an empty cell in CSV, an unquoted empty
+    /// value such as <c>a=</c> in text formats.
     /// </summary>
     public abstract void Null();
 

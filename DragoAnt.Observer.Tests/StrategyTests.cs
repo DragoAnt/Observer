@@ -16,6 +16,10 @@ public sealed class StrategyTests
     [InlineData("", ValueKind.Object, MaskKind.Full, "\"***\"")]
     [InlineData("", ValueKind.Array, MaskKind.Last4, "\"***\"")]
     [InlineData("x", ValueKind.String, MaskKind.Custom, "\"***\"")]
+    [InlineData("x", ValueKind.Binary, MaskKind.Full, "\"***\"")]
+    [InlineData("12345678", ValueKind.Binary, MaskKind.Last4, "\"***\"")]
+    [InlineData("x", ValueKind.Binary, MaskKind.Null, "null")]
+    [InlineData("x", ValueKind.Binary, MaskKind.Custom, "\"***\"")]
     public void Default_MasksEveryKind(string value, ValueKind kind, MaskKind mask, string expected)
         => RecordingWriter.Mask(ValueMaskStrategy.Default, value, kind, MaskTag.Create(mask, mask == MaskKind.Custom ? "k" : null))
             .Should().Be(expected);

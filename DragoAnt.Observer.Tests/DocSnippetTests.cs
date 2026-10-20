@@ -1,6 +1,5 @@
 using System.Reflection;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace DragoAnt.Observer.Tests;
 
@@ -11,20 +10,7 @@ namespace DragoAnt.Observer.Tests;
 /// </summary>
 public sealed class DocSnippetTests
 {
-    private const string GlobalUsings = "global using System;\nglobal using System.Collections.Generic;\nglobal using System.Linq;\n";
-
     private static readonly string[] Documents = ["README.md", "abstractions.package.readme.md", "core.package.readme.md", "comments.md", "hashing.md"];
-
-    private static readonly Lazy<MetadataReference[]> References = new(() =>
-    {
-        _ = typeof(ValueKind).Assembly;
-        var platform = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator);
-        var local = Directory.GetFiles(AppContext.BaseDirectory, "DragoAnt.Observer.*.dll");
-        return platform.Concat(local)
-            .GroupBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
-            .Select(g => (MetadataReference)MetadataReference.CreateFromFile(g.First()))
-            .ToArray();
-    });
 
     public static TheoryData<string, int> Snippets()
     {
@@ -46,10 +32,10 @@ public sealed class DocSnippetTests
     {
         var (line, code) = Extract(document)[index];
 
-        var assembly = Compile(code, OutputKind.ConsoleApplication, out var diagnostics);
+        var assembly = SnippetCompilation.Compile(code, OutputKind.ConsoleApplication, out var diagnostics);
         if (assembly is null && diagnostics.Contains("CS5001", StringComparison.Ordinal))
         {
-            Compile(code, OutputKind.DynamicallyLinkedLibrary, out diagnostics).Should().NotBeNull($"{document} snippet at line {line} must compile:\n{diagnostics}");
+            SnippetCompilation.Compile(code, OutputKind.DynamicallyLinkedLibrary, out diagnostics).Should().NotBeNull($"{document} snippet at line {line} must compile:\n{diagnostics}");
             return;
         }
 
@@ -105,20 +91,6 @@ public sealed class DocSnippetTests
             .Select(l => l.TrimStart().Length > 2 ? l.TrimStart()[3..] : string.Empty)
             .ToList();
         return output.Count == 0 ? null : string.Join('\n', output);
-    }
-
-    private static Assembly? Compile(string code, OutputKind kind, out string diagnostics)
-    {
-        var tree = CSharpSyntaxTree.ParseText(GlobalUsings + code, new CSharpParseOptions(LanguageVersion.Latest));
-        var compilation = CSharpCompilation.Create(
-            "Snippet" + Guid.NewGuid().ToString("N"),
-            [tree],
-            References.Value,
-            new CSharpCompilationOptions(kind, nullableContextOptions: NullableContextOptions.Enable));
-        using var stream = new MemoryStream();
-        var result = compilation.Emit(stream);
-        diagnostics = string.Join("\n", result.Diagnostics.Where(d => d.Severity >= DiagnosticSeverity.Warning));
-        return result.Success ? Assembly.Load(stream.ToArray()) : null;
     }
 
     private static string Run(Assembly assembly)

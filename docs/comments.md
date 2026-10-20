@@ -39,6 +39,8 @@ var observer = JsonObserver.Obj(AnyDepth(rules => rules
 | `CommentKind.Inline` | on the same line as a member's value, after it | the member |
 | `CommentKind.After` | after the last member of an object or array, before it closes, or after the document | the container |
 
+In a format without closing brackets — key=value lines, INI sections — a comment belongs to the next member at any level (`Before`), so a comment above `[db]` stays with `[db]`; a comment on a member's line is `Inline`; only the comments no member follows are `After`, owned by the document.
+
 A comment has exactly one owner. **A kept comment of a masked value is written masked** (`Keep` under a masked owner becomes `Mask(MaskTag.Full)`); only `CommentRules.Raw` writes it in clear — the comment twin of an unmasked value.
 
 ## In JSON

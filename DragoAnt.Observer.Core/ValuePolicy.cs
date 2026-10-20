@@ -11,18 +11,19 @@ public enum ValuePolicyKind
     BlockList,
 
     /// <summary>
-    /// Every string, number and boolean no rule matches is written as <c>"***"</c>; <c>null</c> stays <c>null</c>.
+    /// Every string, number and boolean no rule matches is written as <c>"***"</c>; a value in the no-value form
+    /// stays so.
     /// </summary>
     AllowList,
 
     /// <summary>
-    /// Every value no rule matches is written as <c>null</c>.
+    /// Every value no rule matches is written in the format's no-value form (<c>null</c> in JSON).
     /// </summary>
     NullList,
 
     /// <summary>
     /// Every string, number and boolean no rule matches is masked by the call's strategy with <see cref="ValuePolicy.Tag"/>;
-    /// <c>null</c> stays <c>null</c>.
+    /// a value in the no-value form stays so.
     /// </summary>
     Tagged,
 }
@@ -44,19 +45,20 @@ public sealed class ValuePolicy
     public static ValuePolicy BlockList { get; } = new(ValuePolicyKind.BlockList, MaskTag.Full);
 
     /// <summary>
-    /// Writes every string, number and boolean as <c>"***"</c> and keeps <c>null</c>: only values a rule allows are shown.
+    /// Writes every string, number and boolean as <c>"***"</c> and keeps a value in the no-value form: only values a
+    /// rule allows are shown.
     /// The default of every observer.
     /// </summary>
     public static ValuePolicy AllowList { get; } = new(ValuePolicyKind.AllowList, MaskTag.Full);
 
     /// <summary>
-    /// Writes every value as <c>null</c>.
+    /// Writes every value in the format's no-value form (<c>null</c> in JSON).
     /// </summary>
     public static ValuePolicy NullList { get; } = new(ValuePolicyKind.NullList, MaskTag.Null);
 
     /// <summary>
     /// Masks every string, number and boolean with the call's strategy and <paramref name="tag"/>, for example every
-    /// unmatched value hashed; <c>null</c> stays <c>null</c>.
+    /// unmatched value hashed; a value in the no-value form stays so.
     /// </summary>
     /// <param name="tag">How each value is masked.</param>
     public static ValuePolicy Tagged(MaskTag tag) => new(ValuePolicyKind.Tagged, tag);

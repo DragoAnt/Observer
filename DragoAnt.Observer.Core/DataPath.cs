@@ -19,6 +19,7 @@ public ref struct DataPath
     private byte[]? _scratch;
     private int _scratchUsed;
     private int _count;
+    private long _recordSlot;
 
     /// <summary>
     /// Creates an empty path for one pass over <paramref name="input"/>; dispose it when the pass ends. For format implementations.
@@ -46,6 +47,19 @@ public ref struct DataPath
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public int MaxLength { readonly get; private set; }
+
+    /// <summary>Position of the record that holds the value, from 0; -1 otherwise. Not a level of the path.</summary>
+    public readonly long RecordIndex => _recordSlot - 1;
+
+    /// <summary>Sets <see cref="RecordIndex"/> for the record about to be read. For format implementations.</summary>
+    /// <param name="index">Position of the record, from 0; -1 clears it.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than -1.</exception>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void SetRecordIndex(long index)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(index, -1);
+        _recordSlot = index + 1;
+    }
 
     internal readonly bool NameCaseInsensitive { get; }
 

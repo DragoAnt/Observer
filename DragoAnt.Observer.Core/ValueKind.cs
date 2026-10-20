@@ -21,7 +21,8 @@ public enum ValueKind : byte
     Boolean,
 
     /// <summary>
-    /// No value: <c>null</c> in JSON, an empty cell in CSV.
+    /// No value — the format's no-value form: <c>null</c> in JSON, an empty cell in CSV, an unquoted empty value such
+    /// as <c>a=</c> in text formats. A quoted empty value is an empty <see cref="String"/>.
     /// </summary>
     Null,
 
@@ -34,4 +35,11 @@ public enum ValueKind : byte
     /// An array: items with positions.
     /// </summary>
     Array,
+
+    /// <summary>
+    /// An opaque payload, such as a file part: <see cref="MaskContext.Value"/> holds its raw bytes. The built-in strategy
+    /// hashes the bytes for <see cref="MaskKind.Hash"/>, writes the no-value form for <see cref="MaskKind.Null"/>, and
+    /// <c>***</c> for every other tag.
+    /// </summary>
+    Binary,
 }

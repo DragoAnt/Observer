@@ -10,11 +10,45 @@ public sealed class DataPathTests
         var path = default(DataPath);
 
         path.Length.Should().Be(0);
+        path.RecordIndex.Should().Be(-1);
         path.ToString().Should().BeEmpty();
         path.LastName.IsEmpty.Should().BeTrue();
         path.GetName(0).Should().BeNull();
         path.TryFormat(Span<char>.Empty, out var written).Should().BeTrue();
         written.Should().Be(0);
+    }
+
+    [Fact]
+    public void RecordIndex_IsNotALevel()
+    {
+        var path = new DataPath(default, 2, true);
+        try
+        {
+            path.RecordIndex.Should().Be(-1);
+            path.SetRecordIndex(41);
+            path.PushName("email"u8);
+            path.RecordIndex.Should().Be(41);
+            path.Length.Should().Be(1);
+            path.ToString().Should().Be("email");
+            new MaskContext("x"u8, ValueKind.String, MaskTag.Full, ObserverOptions.Default, in path, 0).Path.RecordIndex.Should().Be(41);
+            path.SetRecordIndex(-1);
+            path.RecordIndex.Should().Be(-1);
+            var threw = false;
+            try
+            {
+                path.SetRecordIndex(-2);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                threw = true;
+            }
+
+            threw.Should().BeTrue();
+        }
+        finally
+        {
+            path.Dispose();
+        }
     }
 
     [Fact]

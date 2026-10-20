@@ -13,6 +13,7 @@ Format-neutral building blocks of the DragoAnt observers — mask tags, paths, n
 | --- | --- | --- |
 | [DragoAnt.Observer.Abstractions](https://www.nuget.org/packages/DragoAnt.Observer.Abstractions) | `netstandard2.0` | `MaskKind`, `MaskTag` — no dependencies, for model libraries |
 | [DragoAnt.Observer.Core](https://www.nuget.org/packages/DragoAnt.Observer.Core) | `net8.0`, `net10.0` | options, strategy, policies, results, paths, name tests |
+| [DragoAnt.Observer.Conformance](https://www.nuget.org/packages/DragoAnt.Observer.Conformance) | `net8.0`, `net10.0` | conformance scenarios and invariants that test a format; experimental (`DAOEXP002`) |
 
 You usually reference a format package instead, which brings Core: [DragoAnt.System.Text.Json.Observer](https://www.nuget.org/packages/DragoAnt.System.Text.Json.Observer) for JSON.
 
@@ -21,7 +22,7 @@ You usually reference a format package instead, which brings Core: [DragoAnt.Sys
 - **One strategy for every format** — `ValueMaskStrategy.Mask(in MaskContext, MaskValueWriter)` sees the whole value, its kind, the tag, the path and its position, and writes through a format's writer, which validates numbers.
 - **The hash of Microsoft's `HmacRedactor`** — `MaskKind.Hash` writes the same text for the same key and key id, so hashes correlate with logs redacted by Microsoft.Extensions.Compliance.Redaction ([hashing](./docs/hashing.md)).
 - **Policies as values** — `ValuePolicy.AllowList` / `BlockList` / `NullList` / `Tagged(tag)` for unmatched values, and `CommentPolicy` with comment rules for comments ([comments](./docs/comments.md)).
-- **Results that say why** — `MaskResult` with `MaskStatus` and `MaskFlags` (`InputTruncated`, `OutputCapped`, `ValueCut`, `TrailingData`, `InvalidUtf8Replaced`, `Depth`).
+- **Results that say why** — `MaskResult` with `MaskStatus` and `MaskFlags` (`InputTruncated`, `OutputCapped`, `ValueCut`, `TrailingData`, `InvalidUtf8Replaced`, `Depth`, `ValueTooLarge`, `RecordFailed`).
 - **Allocation-free paths and name tests** — `DataPath` keeps names as UTF-8 and formats into a span; `Names` tests compare UTF-8 bytes and follow one case option.
 
 ## Install
