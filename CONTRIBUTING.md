@@ -19,11 +19,13 @@ dotnet build -c Release --no-restore
 dotnet test --solution DragoAnt.Observer.slnx -c Release --no-build
 ```
 
+CI runs these steps on Ubuntu and Windows.
+
 The stack:
 
 - [xUnit v3](https://xunit.net/docs/getting-started/v3/cmdline) on [Microsoft.Testing.Platform](https://learn.microsoft.com/dotnet/core/testing/microsoft-testing-platform-intro) v2.
 - [AwesomeAssertions](https://github.com/AwesomeAssertions/AwesomeAssertions) for assertions.
-- [Verify](https://github.com/VerifyTests/Verify) snapshots, pinned to 32.0.0: later versions are expected to need a paid maintenance subscription, while 32.0.0 is MIT. When a snapshot changes on purpose, review the `*.received.*` file and replace the matching `*.verified.*` file with it.
+- [Verify](https://github.com/VerifyTests/Verify) snapshots, pinned to [32.0.0](https://www.nuget.org/packages/Verify.XunitV3/32.0.0): later versions are expected to need a paid maintenance subscription, while 32.0.0 is MIT. When a snapshot changes on purpose, review the `*.received.*` file and replace the matching `*.verified.*` file with it.
 - [package validation](https://learn.microsoft.com/dotnet/fundamentals/apicompat/package-validation/overview) on every pack, and a public API snapshot test per assembly (`ApiSurfaceTests`).
 - [BenchmarkDotNet](https://benchmarkdotnet.org/) for performance claims.
 
