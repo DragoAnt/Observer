@@ -65,12 +65,44 @@ public sealed class ValueTypesTests
         options.MaxOutputBytes.Should().Be(int.MaxValue);
         options.MaxValueBytes.Should().Be(int.MaxValue);
         options.MaxDepth.Should().Be(64);
+        options.MaxRecordBytes.Should().Be(1 << 20);
+        options.MaxMaskValueBytes.Should().Be(int.MaxValue);
         options.HashKey.IsEmpty.Should().BeTrue();
         options.HashKeyId.Should().BeNull();
         options.Strategy.Should().BeNull();
         options.NameCaseInsensitive.Should().BeTrue();
         options.IgnoreNulls.Should().BeFalse();
         NoContext.Instance.Should().BeSameAs(NoContext.Instance);
+    }
+
+    [Fact]
+    public void MaskResult_BytesWritten_IsLong()
+    {
+        var result = new MaskResult { BytesWritten = 3L * int.MaxValue };
+        result.BytesWritten.Should().Be(3L * int.MaxValue);
+    }
+
+    [Fact]
+    public void MaskRecordsResult_FromDocument_IsARunOfOne()
+    {
+        var ok = MaskRecordsResult.FromDocument(new MaskResult { Status = MaskStatus.Truncated, BytesWritten = 5, FailedAtByte = -1, Flags = MaskFlags.ValueCut }, bytesRead: 9);
+        ok.Should().Be(new MaskRecordsResult { Status = MaskStatus.Truncated, Flags = MaskFlags.ValueCut, Records = 1, FailedRecords = 0, DroppedRecords = 0, FirstFailedRecord = -1, BytesRead = 9, BytesWritten = 5 });
+
+        var bad = MaskRecordsResult.FromDocument(new MaskResult { Status = MaskStatus.Invalid, BytesWritten = 2, FailedAtByte = 4 }, bytesRead: 7);
+        bad.Should().Be(new MaskRecordsResult { Status = MaskStatus.Invalid, Flags = MaskFlags.RecordFailed, Records = 1, FailedRecords = 1, DroppedRecords = 0, FirstFailedRecord = 0, BytesRead = 7, BytesWritten = 2 });
+
+        MaskRecordsResult.FromDocument(new MaskResult { Status = MaskStatus.Unrecognized }, 0).Flags.Should().Be(MaskFlags.RecordFailed);
+    }
+
+    [Fact]
+    public void NewEnumMembers_HaveTheirValues()
+    {
+        ((byte)ValueKind.Binary).Should().Be(6);
+        ((int)MaskFlags.ValueTooLarge).Should().Be(64);
+        ((int)MaskFlags.RecordFailed).Should().Be(128);
+        ((int)CommentStyle.Semicolon).Should().Be(3);
+        ((int)CommentStyle.Exclamation).Should().Be(4);
+        ((int)CommentStyle.Markup).Should().Be(5);
     }
 
     [Fact]

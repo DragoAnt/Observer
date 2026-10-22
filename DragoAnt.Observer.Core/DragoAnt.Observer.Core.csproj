@@ -5,6 +5,9 @@
     <EnforcePublicApiDocs>true</EnforcePublicApiDocs>
     <PackageTags>masking;redaction;pii;observer;hmac;streaming</PackageTags>
   </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="System.IO.Pipelines" />
+  </ItemGroup>
   <ItemGroup>
     <!-- PrivateAssets none: the build assets of Abstractions (the toolchain guard from 1.1) reach every consumer of Core. -->
     <ProjectReference Include="..\DragoAnt.Observer.Abstractions\DragoAnt.Observer.Abstractions.csproj" PrivateAssets="none" />

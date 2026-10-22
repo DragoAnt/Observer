@@ -10,11 +10,13 @@ public enum CommentKind
 {
     /// <summary>
     /// Before the member: every comment between the previous member's line and the member, the member's name included.
+    /// In a format without closing brackets every comment belongs to the next member at any level.
     /// </summary>
     Before = 1,
 
     /// <summary>
-    /// After the last member of an object or array, or after the document: owned by the container.
+    /// After the last member of an object or array, or after the document: owned by the container. In a format without
+    /// closing brackets only comments no member follows are After, owned by the document.
     /// </summary>
     After = 2,
 
@@ -45,9 +47,16 @@ public enum CommentStyle
     Block,
 
     /// <summary>
-    /// A hash comment, <c># …</c>, as in YAML.
+    /// A hash comment, <c># …</c>, as in YAML, <c>.env</c> and INI files.
     /// </summary>
     Hash,
+
+    /// <summary>A semicolon comment, <c>; …</c>, as in INI files.</summary>
+    Semicolon,
+    /// <summary>An exclamation comment, <c>! …</c>, as in Java <c>.properties</c> files.</summary>
+    Exclamation,
+    /// <summary>A markup comment, <c>&lt;!-- … --&gt;</c>, as in XML.</summary>
+    Markup,
 }
 
 /// <summary>

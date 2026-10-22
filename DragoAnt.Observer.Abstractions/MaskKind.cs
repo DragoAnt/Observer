@@ -22,7 +22,8 @@ public enum MaskKind
     Hash,
 
     /// <summary>
-    /// Replaced by <c>null</c>; the member itself stays.
+    /// Replaced by the format's no-value form: <c>null</c> in JSON, an empty cell in CSV, an unquoted empty value such
+    /// as <c>a=</c> in text formats. The member itself stays.
     /// </summary>
     Null,
 

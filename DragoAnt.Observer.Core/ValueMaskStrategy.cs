@@ -10,9 +10,10 @@ public abstract class ValueMaskStrategy
 {
     /// <summary>
     /// Built-in strategy: <see cref="MaskKind.Full"/> writes <c>"***"</c>, <see cref="MaskKind.Last4"/> keeps the last
-    /// four characters, <see cref="MaskKind.Hash"/> writes the keyed hash of a string's text or a number's or boolean's
-    /// literal — the same text as Microsoft's <c>HmacRedactor</c> for the same key and key id —, <see cref="MaskKind.Null"/> writes no value;
-    /// anything else, <see cref="MaskKind.Custom"/> included, becomes <c>"***"</c>.
+    /// four characters of a string or number, <see cref="MaskKind.Hash"/> writes the keyed hash of a string's text or
+    /// a number's or boolean's literal — the same text as Microsoft's <c>HmacRedactor</c> for the same key and key id —
+    /// or of a binary value's raw bytes, <see cref="MaskKind.Null"/> writes the no-value form; anything else,
+    /// <see cref="MaskKind.Custom"/> included, becomes <c>"***"</c>.
     /// </summary>
     public static ValueMaskStrategy Default { get; } = new DefaultValueMaskStrategy();
 
@@ -42,8 +43,11 @@ public abstract class ValueMaskStrategy
                 case MaskKind.Last4 when scalar:
                     WriteLast4(context.Value, output);
                     break;
+                case MaskKind.Hash when context.Kind == ValueKind.Binary:
+                    WriteHash(in context, output, binary: true);
+                    break;
                 case MaskKind.Hash when scalar || context.Kind == ValueKind.Boolean:
-                    WriteHash(in context, output);
+                    WriteHash(in context, output, binary: false);
                     break;
                 default:
                     output.String(Stars);
@@ -84,11 +88,14 @@ public abstract class ValueMaskStrategy
             output.String(masked);
         }
 
-        private static void WriteHash(in MaskContext context, MaskValueWriter output)
+        private static void WriteHash(in MaskContext context, MaskValueWriter output, bool binary)
         {
             var options = context.Options;
             Span<byte> text = stackalloc byte[HmacHash.MaxLength];
-            var length = HmacHash.Write(context.Value, options.HashKey.IsEmpty ? ProcessKey : options.HashKey.Span, options.HashKeyId, text);
+            var key = options.HashKey.IsEmpty ? ProcessKey : options.HashKey.Span;
+            var length = binary
+                ? HmacHash.WriteBytes(context.Value, key, options.HashKeyId, text)
+                : HmacHash.Write(context.Value, key, options.HashKeyId, text);
             output.String(text[..length]);
         }
     }

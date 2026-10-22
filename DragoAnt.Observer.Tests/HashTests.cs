@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Cryptography;
 using Microsoft.Extensions.Compliance.Redaction;
 using Microsoft.Extensions.Options;
 
@@ -52,6 +53,28 @@ public sealed class HashTests
         Redactor(keyId: 7).Redact("").Should().BeEmpty();
         RecordingWriter.Mask(ValueMaskStrategy.Default, "", ValueKind.String, MaskTag.Hash, ObserverOptions.Default with { HashKeyId = 7 })
             .Should().Be("\"\"");
+    }
+
+    public static TheoryData<byte[], int?> BinaryCorpus => new()
+    {
+        { new byte[] { 0, 1, 2, 255 }, null },
+        { new byte[] { 0, 1, 2, 255 }, 7 },
+        { Enumerable.Range(0, 300).Select(i => (byte)new Random(42 + i).Next(256)).ToArray(), null },
+        { Enumerable.Range(0, 300).Select(i => (byte)new Random(42 + i).Next(256)).ToArray(), 7 },
+        { Array.Empty<byte>(), null },
+        { Array.Empty<byte>(), 7 },
+    };
+
+    [Theory]
+    [MemberData(nameof(BinaryCorpus))]
+    public void BinaryHash_UsesRawBytes(byte[] bytes, int? keyId)
+    {
+        var key = Convert.FromBase64String(Base64Key);
+        var options = new ObserverOptions { HashKey = key, HashKeyId = keyId };
+        var expected = bytes.Length == 0 ? "" : (keyId is { } id ? $"{id}:" : "") + Convert.ToBase64String(HMACSHA256.HashData(key, bytes)[..16]);
+
+        RecordingWriter.Mask(ValueMaskStrategy.Default, bytes, ValueKind.Binary, MaskTag.Hash, options)
+            .Should().Be($"\"{expected}\"");
     }
 
     [Fact]

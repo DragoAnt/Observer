@@ -1,0 +1,62 @@
+﻿namespace DragoAnt.Observer.Formats
+{
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public interface IObserverFormat
+    {
+        System.Collections.Generic.IReadOnlyList<string> MediaTypes { get; }
+        string Name { get; }
+        DragoAnt.Observer.Formats.IObserverFormatBinding Bind(DragoAnt.Observer.MaskRules rules);
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP002", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public interface IObserverFormatBinding
+    {
+        DragoAnt.Observer.MaskResult Mask(System.ReadOnlySpan<byte> input, System.Buffers.IBufferWriter<byte> output, DragoAnt.Observer.ObserverOptions? options = null);
+        System.Threading.Tasks.ValueTask<DragoAnt.Observer.MaskRecordsResult> MaskAsync(System.IO.Pipelines.PipeReader input, System.IO.Pipelines.PipeWriter output, DragoAnt.Observer.ObserverOptions? options = null, System.Threading.CancellationToken cancellationToken = default);
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP001", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class MaskRule
+    {
+        public DragoAnt.Observer.Formats.MaskRuleAction Action { get; }
+        public DragoAnt.Observer.CommentKind CommentKinds { get; }
+        public DragoAnt.Observer.CommentRule? CommentRule { get; }
+        public System.Collections.Generic.IReadOnlyList<DragoAnt.Observer.NameMatch> Levels { get; }
+        public DragoAnt.Observer.Formats.MaskRuleScope Scope { get; }
+        public DragoAnt.Observer.MaskTag Tag { get; }
+        public override string ToString() { }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP001", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public enum MaskRuleAction
+    {
+        Mask = 0,
+        Unmasked = 1,
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP001", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public enum MaskRuleScope
+    {
+        AnyDepth = 0,
+        FromRoot = 1,
+    }
+}
+namespace DragoAnt.Observer
+{
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP001", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class MaskRuleBuilder
+    {
+        public DragoAnt.Observer.MaskRuleBuilder Comment(DragoAnt.Observer.CommentKind kinds, DragoAnt.Observer.CommentRule rule) { }
+        public DragoAnt.Observer.MaskRulesBuilder Mask(DragoAnt.Observer.MaskTag tag) { }
+        public DragoAnt.Observer.MaskRulesBuilder Unmasked() { }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP001", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class MaskRules
+    {
+        public System.Collections.Generic.IReadOnlyList<DragoAnt.Observer.Formats.MaskRule> Rules { get; }
+        public DragoAnt.Observer.ValuePolicy Unmatched { get; }
+        public static DragoAnt.Observer.MaskRules Create(System.Action<DragoAnt.Observer.MaskRulesBuilder> rules, DragoAnt.Observer.ValuePolicy? unmatched = null) { }
+    }
+    [System.Diagnostics.CodeAnalysis.Experimental("DAOEXP001", UrlFormat="https://github.com/DragoAnt/Observer/blob/main/docs/experimental.md")]
+    public sealed class MaskRulesBuilder
+    {
+        public DragoAnt.Observer.MaskRuleBuilder Match(DragoAnt.Observer.NameMatch name) { }
+        public DragoAnt.Observer.MaskRuleBuilder Path(params DragoAnt.Observer.NameMatch[] levels) { }
+    }
+}

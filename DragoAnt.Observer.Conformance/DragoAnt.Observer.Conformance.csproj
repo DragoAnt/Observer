@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>DragoAnt.Observer.Conformance</RootNamespace>
+    <Description>Format-neutral conformance scenarios and invariants for DragoAnt observer formats: one rule declaration, a document per format, and leak, truncation, status, policy, path, case, comment and round-trip checks run against any IObserverFormat.</Description>
+    <EnforcePublicApiDocs>true</EnforcePublicApiDocs>
+    <PackageTags>masking;redaction;observer;conformance;testing</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DragoAnt.Observer.Core\DragoAnt.Observer.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="DragoAnt.Observer.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);DAOEXP001;DAOEXP002</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DragoAnt.Observer.Core\DragoAnt.Observer.Core.csproj" />
+    <ProjectReference Include="..\DragoAnt.Observer.Conformance\DragoAnt.Observer.Conformance.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Verify.XunitV3" />

@@ -8,7 +8,7 @@ namespace DragoAnt.Observer;
 
 /// <summary>
 /// The text of <see cref="MaskKind.Hash"/>: HMAC-SHA256 over the value's UTF-16 code units, the first 16 bytes in
-/// base64, after <c>"&lt;keyId&gt;:"</c> when a key id is set — the output format of Microsoft's <c>HmacRedactor</c>.
+/// base64, after <c>"&lt;keyId&gt;:"</c> when a key id is set — or over the raw bytes of a binary value.
 /// </summary>
 internal static class HmacHash
 {
@@ -48,6 +48,27 @@ internal static class HmacHash
             }
         }
 
+        return WriteHash(hash, keyId, destination);
+    }
+
+    /// <summary>
+    /// The hash text of a binary value: HMAC-SHA256 over the raw bytes, the first 16 bytes in base64, after a key-id
+    /// prefix when set; an empty value has an empty hash.
+    /// </summary>
+    public static int WriteBytes(ReadOnlySpan<byte> value, ReadOnlySpan<byte> key, int? keyId, Span<byte> destination)
+    {
+        if (value.IsEmpty)
+        {
+            return 0;
+        }
+
+        Span<byte> hash = stackalloc byte[32];
+        HMACSHA256.HashData(key, value, hash);
+        return WriteHash(hash, keyId, destination);
+    }
+
+    private static int WriteHash(ReadOnlySpan<byte> hash, int? keyId, Span<byte> destination)
+    {
         var written = 0;
         if (keyId is { } id)
         {

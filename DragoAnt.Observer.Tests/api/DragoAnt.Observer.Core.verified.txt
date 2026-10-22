@@ -67,6 +67,9 @@ namespace DragoAnt.Observer
         Line = 0,
         Block = 1,
         Hash = 2,
+        Semicolon = 3,
+        Exclamation = 4,
+        Markup = 5,
     }
     public ref struct DataPath
     {
@@ -74,6 +77,7 @@ namespace DragoAnt.Observer
         public System.ReadOnlySpan<byte> LastName { get; }
         public int Length { get; }
         public int MaxLength { get; }
+        public long RecordIndex { get; }
         public void Dispose() { }
         public string? GetName(int index) { }
         public string? GetNameFromEnd(int fromEnd) { }
@@ -84,6 +88,7 @@ namespace DragoAnt.Observer
         public void PushName(System.ReadOnlySpan<byte> utf8Name) { }
         public void PushReservedName(int length) { }
         public System.Span<byte> ReserveName(int maxLength) { }
+        public void SetRecordIndex(long index) { }
         public override string ToString() { }
         public bool TryFormat(System.Span<char> destination, out int charsWritten) { }
         public bool TryGetItemIndex(int index, out int itemIndex) { }
@@ -111,15 +116,29 @@ namespace DragoAnt.Observer
         TrailingData = 8,
         InvalidUtf8Replaced = 16,
         Depth = 32,
+        ValueTooLarge = 64,
+        RecordFailed = 128,
     }
     public enum MaskNulls
     {
         Keep = 0,
         Mask = 1,
     }
+    public readonly struct MaskRecordsResult : System.IEquatable<DragoAnt.Observer.MaskRecordsResult>
+    {
+        public long BytesRead { get; init; }
+        public long BytesWritten { get; init; }
+        public long DroppedRecords { get; init; }
+        public long FailedRecords { get; init; }
+        public long FirstFailedRecord { get; init; }
+        public DragoAnt.Observer.MaskFlags Flags { get; init; }
+        public long Records { get; init; }
+        public DragoAnt.Observer.MaskStatus Status { get; init; }
+        public static DragoAnt.Observer.MaskRecordsResult FromDocument(in DragoAnt.Observer.MaskResult document, long bytesRead) { }
+    }
     public readonly struct MaskResult : System.IEquatable<DragoAnt.Observer.MaskResult>
     {
-        public int BytesWritten { get; init; }
+        public long BytesWritten { get; init; }
         public long FailedAtByte { get; init; }
         public DragoAnt.Observer.MaskFlags Flags { get; init; }
         public DragoAnt.Observer.MaskStatus Status { get; init; }
@@ -173,7 +192,9 @@ namespace DragoAnt.Observer
         public int? HashKeyId { get; init; }
         public bool IgnoreNulls { get; init; }
         public int MaxDepth { get; init; }
+        public int MaxMaskValueBytes { get; init; }
         public int MaxOutputBytes { get; init; }
+        public int MaxRecordBytes { get; init; }
         public int MaxValueBytes { get; init; }
         public bool NameCaseInsensitive { get; init; }
         public DragoAnt.Observer.ValueMaskStrategy? Strategy { get; init; }
@@ -217,6 +238,7 @@ namespace DragoAnt.Observer
         Null = 3,
         Object = 4,
         Array = 5,
+        Binary = 6,
     }
     public abstract class ValueMaskStrategy
     {

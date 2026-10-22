@@ -30,13 +30,16 @@ internal sealed class RecordingWriter : MaskValueWriter
     protected override void InvalidNumber() => Failed = true;
 
     public static string Mask(ValueMaskStrategy strategy, string value, ValueKind kind, MaskTag tag, ObserverOptions? options = null)
+        => Mask(strategy, Encoding.UTF8.GetBytes(value), kind, tag, options);
+
+    public static string Mask(ValueMaskStrategy strategy, byte[] value, ValueKind kind, MaskTag tag, ObserverOptions? options = null)
     {
         var writer = new RecordingWriter();
         var path = new DataPath(default, 4, true);
         try
         {
             path.PushName("field"u8);
-            strategy.Mask(new MaskContext(Encoding.UTF8.GetBytes(value), kind, tag, options ?? ObserverOptions.Default, in path, 0), writer);
+            strategy.Mask(new MaskContext(value, kind, tag, options ?? ObserverOptions.Default, in path, 0), writer);
         }
         finally
         {

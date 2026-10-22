@@ -1,33 +1,47 @@
 namespace DragoAnt.Observer;
 
 /// <summary>
-/// Limits and settings of one observer call, the same for every format. A format adds its own output settings in a
-/// derived record, such as the JSON observer's <c>JsonObserverOptions</c>.
+/// Limits and settings of one observer call, the same for every format. Every limit applies per document; in a format
+/// with many records per input, each record is a document. A format adds its own output settings in a derived record.
 /// </summary>
 public record ObserverOptions
 {
     /// <summary>
-    /// Defaults: no size limits, depth 64, a per-process hash key, the built-in strategy, names matched ignoring case
-    /// and <c>null</c> values kept.
+    /// Defaults: no size limits but <see cref="MaxRecordBytes"/>, depth 64, a per-process hash key, the built-in strategy,
+    /// names matched ignoring case and no-value members kept.
     /// </summary>
     public static ObserverOptions Default { get; } = new();
 
     /// <summary>
-    /// Output size limit in bytes; when reached the output is closed and the result has <see cref="MaskFlags.OutputCapped"/>.
+    /// Output size limit of one document, in bytes; when reached the output is closed and the result has <see cref="MaskFlags.OutputCapped"/>.
     /// </summary>
     public int MaxOutputBytes { get; init; } = int.MaxValue;
 
     /// <summary>
     /// Longest string value written unmasked, in UTF-8 bytes; a longer one is cut, ends with an ellipsis and sets
-    /// <see cref="MaskFlags.ValueCut"/>. A masking function receives the whole value, and mask output — a hash
+    /// <see cref="MaskFlags.ValueCut"/>. A strategy receives the whole value up to <see cref="MaxMaskValueBytes"/>, and mask output — a hash
     /// included — is never cut.
     /// </summary>
     public int MaxValueBytes { get; init; } = int.MaxValue;
 
     /// <summary>
-    /// Deepest nesting accepted; a deeper payload is <see cref="MaskStatus.Invalid"/> with <see cref="MaskFlags.Depth"/>.
+    /// Deepest nesting of one document; a deeper document is <see cref="MaskStatus.Invalid"/> with <see cref="MaskFlags.Depth"/>.
     /// </summary>
     public int MaxDepth { get; init; } = 64;
+
+    /// <summary>
+    /// Largest input of one record, in bytes, for a format that reads many records from one input, such as NDJSON or
+    /// logfmt; a longer record is never written raw: it is counted as failed and masked whole or dropped, as the format
+    /// documents. Formats that read one document per input ignore it. 1 MiB by default.
+    /// </summary>
+    public int MaxRecordBytes { get; init; } = 1 << 20;
+
+    /// <summary>
+    /// Longest value handed to a <see cref="ValueMaskStrategy"/>, in bytes after the format transcodes it to UTF-8; a
+    /// longer value is written as <c>***</c> without calling the strategy and sets <see cref="MaskFlags.ValueTooLarge"/>.
+    /// No limit by default; a format that cannot hold a value whole documents a lower one.
+    /// </summary>
+    public int MaxMaskValueBytes { get; init; } = int.MaxValue;
 
     /// <summary>
     /// Key of <see cref="MaskKind.Hash"/>. When empty, a random key is used for the lifetime of the process, so hashes
@@ -55,7 +69,8 @@ public record ObserverOptions
     public bool NameCaseInsensitive { get; init; } = true;
 
     /// <summary>
-    /// Drop members and array items whose value is <c>null</c>, and objects and arrays left empty by that.
+    /// Drop members and array items whose value is the format's no-value form — <c>null</c> in JSON, an unquoted empty
+    /// value such as <c>a=</c> in text formats — and objects and arrays left empty by that.
     /// </summary>
     public bool IgnoreNulls { get; init; }
 
