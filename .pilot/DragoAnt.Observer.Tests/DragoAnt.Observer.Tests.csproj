@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DragoAnt.Observer.Tests</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\$(AssemblyName)\**\*.cs" Exclude="..\..\$(AssemblyName)\obj\**;..\..\$(AssemblyName)\bin\**" LinkBase="src" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DragoAnt.Observer.Core" />
+    <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="PublicApiGenerator" />
+    <PackageReference Include="Microsoft.Extensions.Compliance.Redaction" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+  </ItemGroup>
+  <!-- The package readmes are the ones nuget.org shows: read them from the restored packages, not the repo. -->
+  <PropertyGroup>
+    <_PilotPackages>$([MSBuild]::EnsureTrailingSlash($(NuGetPackageRoot)))</_PilotPackages>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Link="docs\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(_PilotPackages)dragoant.observer.abstractions/$(PilotVersion.ToLowerInvariant())/readme.md" Link="docs\abstractions.package.readme.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(_PilotPackages)dragoant.observer.core/$(PilotVersion.ToLowerInvariant())/readme.md" Link="docs\core.package.readme.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\docs\*.md" Link="docs\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
